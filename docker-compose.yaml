@@ -12,14 +12,14 @@ services:
       context: .
       dockerfile: Dockerfile.postgres
     networks:
-      - zep-network
+      - cairabackend_zep-network
     volumes:
       - zep-db:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 100s
+      timeout: 100s
+      retries: 20
   nlp:
     image: ghcr.io/getzep/zep-nlp-server:latest
     container_name: zep-nlp
@@ -27,15 +27,16 @@ services:
       - .env # You can set your embedding-related variables here
     restart: on-failure
     networks:
-      - zep-network
+      - cairabackend_zep-network
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/5557' || exit 1
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 45s
+      interval: 100s
+      timeout: 100s
+      retries: 20
+      start_period: 1800s
   zep:
-    image: ghcr.io/getzep/zep:latest
+    # image: ghcr.io/getzep/zep:latest
+    image: gdrivechatbot.azurecr.io/customzep:latest
     container_name: zep
     restart: on-failure
     depends_on:
@@ -63,14 +64,16 @@ services:
       dockerfile: Dockerfile
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8000' || exit 1
-      interval: 5s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      interval: 100s
+      timeout: 100s
+      retries: 20
+      start_period: 1800s
     networks:
-      - zep-network
+      - cairabackend_zep-network
 networks:
-  zep-network:
+  cairabackend_zep-network:
+    name: cairabackend_zep-network
+    external: true
     driver: bridge
 volumes:
   zep-db:

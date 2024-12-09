@@ -1,0 +1,11 @@
+# Build image
+docker build --platform linux/amd64 -t gdrivechatbot.azurecr.io/customzep:latest .
+
+# Login to Azure
+az login
+
+# Login to Azure Container Registry
+az acr login --name gdrivechatbot
+
+# Push latest image to Azure Container Registry
+docker push unwildered.azurecr.io/customzep:latest
